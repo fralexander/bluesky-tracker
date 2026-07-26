@@ -3,6 +3,11 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+@app.route('/.well-known/atproto-did', methods=['GET'])
+def atproto_did():
+    publisher_did = os.environ.get('PUBLISHER_DID', 'did:plc:due764fs3onxetsxab2jdnrw')
+    return publisher_did, 200, {'Content-Type': 'text/plain'}
+
 @app.route('/xrpc/app.bsky.feed.getFeedSkeleton', methods=['GET'])
 def get_feed_skeleton():
     feed = []
@@ -18,7 +23,7 @@ def get_feed_skeleton():
 @app.route('/xrpc/app.bsky.feed.describeFeedGenerator', methods=['GET'])
 def describe_feed_generator():
     hostname = request.host
-    publisher_did = os.environ.get('PUBLISHER_DID', 'did:plc:example')
+    publisher_did = os.environ.get('PUBLISHER_DID', 'did:plc:due764fs3onxetsxab2jdnrw')
     return jsonify({
         "encoding": "application/json",
         "body": {
