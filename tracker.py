@@ -8,26 +8,30 @@ def main():
     client = Client()
     client.login(USERNAME, PASSWORD)
 
-    query = "#alexasks OR #alexask"
-    print(f"Recherche en cours pour : {query}")
+    query = "alexasks"
+    print(f"Recherche en cours pour la requête : {query}")
     
     filename = "archive_posts.txt"
     
     existing_posts = set()
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
-            existing_posts = set(line.split('|')[0] for line in f.read().splitlines() if '|' in line)
+            for line in f.read().splitlines():
+                if '|' in line:
+                    existing_posts.add(line.split('|')[0])
 
     new_count = 0
     cursor = None
 
     try:
         while True:
-            params = {'q': query, 'limit': 100}
+            params = {'q': query, 'limit': 50}
             if cursor:
                 params['cursor'] = cursor
 
             data = client.app.bsky.feed.search_posts(params=params)
+            
+            print(f"Page récupérée : {len(data.posts)} posts trouvés par l'API.")
             
             if not data.posts:
                 break
@@ -48,7 +52,7 @@ def main():
                 break
             cursor = data.cursor
 
-        print(f"Mise à jour terminée. {new_count} nouveaux posts ajoutés à l'archive.")
+        print(f"Total de nouveaux posts ajoutés : {new_count}")
 
     except Exception as e:
         print(f"Erreur lors de la recherche : {e}")
