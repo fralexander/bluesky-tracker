@@ -3,7 +3,6 @@ from atproto import Client, models
 
 USERNAME = os.environ.get('BSKY_HANDLE')
 PASSWORD = os.environ.get('BSKY_PASSWORD')
-PUBLISHER_DID = os.environ.get('PUBLISHER_DID', 'did:plc:due764fs3onxetsxab2jdnrw')
 HOSTNAME = "bluesky-tracker.onrender.com"
 FEED_SHORTNAME = "alexasks"
 DISPLAY_NAME = "AlexAsks"
@@ -20,7 +19,7 @@ try:
         collection='app.bsky.feed.generator',
         rkey=FEED_SHORTNAME,
         record=models.AppBskyFeedGenerator.Record(
-            did=PUBLISHER_DID,
+            did=f"did:web:{HOSTNAME}",
             display_name=DISPLAY_NAME,
             created_at=client.get_current_time_iso()
         )
