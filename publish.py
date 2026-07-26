@@ -1,5 +1,6 @@
-os = __import__('os')
+import os
 from atproto import Client, models
+from atproto_client.exceptions import InvokeTimeoutError
 
 USERNAME = os.environ.get('BSKY_HANDLE')
 PASSWORD = os.environ.get('BSKY_PASSWORD')
@@ -7,19 +8,25 @@ HOSTNAME = "bluesky-tracker.onrender.com"
 FEED_SHORTNAME = "alexasks"
 DISPLAY_NAME = "AlexAsks (Archive)"
 
-client = Client()
-client.login(USERNAME, PASSWORD)
+client = Client(base_url='https://bsky.social')
 
-feed_did = f"did:web:{HOSTNAME}"
-response = client.com.atproto.repo.put_record(models.ComAtprotoRepoPutRecord.Data(
-    repo=client.me.did,
-    collection='app.bsky.feed.generator',
-    rkey=FEED_SHORTNAME,
-    record=models.AppBskyFeedGenerator.Record(
-        did=feed_did,
-        display_name=DISPLAY_NAME,
-        created_at=client.get_current_time_iso()
-    )
-))
+try:
+    print("Connexion à Bluesky en cours...")
+    client.login(USERNAME, PASSWORD)
+    
+    print("Publication du flux...")
+    response = client.com.atproto.repo.put_record(models.ComAtprotoRepoPutRecord.Data(
+        repo=client.me.did,
+        collection='app.bsky.feed.generator',
+        rkey=FEED_SHORTNAME,
+        record=models.AppBskyFeedGenerator.Record(
+            did=f"did:web:{HOSTNAME}",
+            display_name=DISPLAY_NAME,
+            created_at=client.get_current_time_iso()
+        )
+    ))
+    print(f"Flux publié avec succès ! URI : {response.uri}")
 
-print(f"Flux publié avec succès ! URI : {response.uri}")
+except Exception as e:
+    print(f"Erreur lors de la publication : {e}")
+    raise e
