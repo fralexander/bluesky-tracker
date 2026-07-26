@@ -19,8 +19,11 @@ def get_feed_skeleton():
                     if post_uri.startswith('at://'):
                         feed.append({"post": post_uri})
     
-    return jsonify({"feed": feed[:100]})
-
+    response_data = {
+        "feed": feed[:100]
+    }
+    return jsonify(response_data)
+    
 @app.route('/xrpc/app.bsky.feed.describeFeedGenerator', methods=['GET'])
 def describe_feed_generator():
     hostname = request.host
