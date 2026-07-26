@@ -1,7 +1,10 @@
 import os
+import requests
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/fralexander/bluesky-tracker/main/archive_posts.txt"
 
 @app.route('/.well-known/atproto-did', methods=['GET'])
 def atproto_did():
@@ -11,22 +14,21 @@ def atproto_did():
 @app.route('/xrpc/app.bsky.feed.getFeedSkeleton', methods=['GET'])
 def get_feed_skeleton():
     feed = []
-    if os.path.exists("archive_posts.txt"):
-        with open("archive_posts.txt", "r", encoding="utf-8") as f:
-            for line in f.read().splitlines():
+    try:
+        response = requests.get(GITHUB_RAW_URL, timeout=5)
+        if response.status_code == 200:
+            for line in response.text.splitlines():
                 if '|' in line:
                     post_uri = line.split('|')[0].strip()
                     if post_uri.startswith('at://'):
                         feed.append({"post": post_uri})
-    
-    response_data = {
-        "feed": feed[:100]
-    }
-    return jsonify(response_data)
-    
+    except Exception as e:
+        print(f"Erreur lors de la récupération GitHub : {e}")
+
+    return jsonify({"feed": feed[:100]})
+
 @app.route('/xrpc/app.bsky.feed.describeFeedGenerator', methods=['GET'])
 def describe_feed_generator():
-    hostname = request.host
     publisher_did = os.environ.get('PUBLISHER_DID', 'did:plc:due764fs3onxetsxab2jdnrw')
     return jsonify({
         "encoding": "application/json",
