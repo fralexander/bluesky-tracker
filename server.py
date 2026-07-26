@@ -15,8 +15,9 @@ def get_feed_skeleton():
         with open("archive_posts.txt", "r", encoding="utf-8") as f:
             for line in f.read().splitlines():
                 if '|' in line:
-                    post_uri = line.split('|')[0]
-                    feed.append({"post": post_uri})
+                    post_uri = line.split('|')[0].strip()
+                    if post_uri.startswith('at://'):
+                        feed.append({"post": post_uri})
     
     return jsonify({"feed": feed[:100]})
 
