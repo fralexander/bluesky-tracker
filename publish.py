@@ -4,16 +4,16 @@ from atproto import Client, models
 USERNAME = os.environ.get('BSKY_HANDLE')
 PASSWORD = os.environ.get('BSKY_PASSWORD')
 HOSTNAME = "bluesky-tracker.onrender.com"
-FEED_SHORTNAME = "alexasks2"
+FEED_SHORTNAME = "alexasks"
 DISPLAY_NAME = "AlexAsks"
 
-client = Client(base_url='https://bsky.social')
+client = Client(base_url='https://bluesky.social')
 
 try:
-    print("Connexion à Bluesky en cours...")
+    print("Connexion à Bluesky...")
     client.login(USERNAME, PASSWORD)
     
-    print("Publication du flux sur le serveur externe...")
+    print("Publication/Mise à jour du générateur de flux...")
     response = client.com.atproto.repo.put_record(models.ComAtprotoRepoPutRecord.Data(
         repo=client.me.did,
         collection='app.bsky.feed.generator',
@@ -24,8 +24,7 @@ try:
             created_at=client.get_current_time_iso()
         )
     ))
-    print(f"Flux publié avec succès ! URI : {response.uri}")
+    print(f"Succès ! URI du flux : {response.uri}")
 
 except Exception as e:
-    print(f"Erreur lors de la publication : {e}")
-    raise e
+    print(f"Erreur : {e}")
