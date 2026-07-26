@@ -32,10 +32,11 @@ def describe_feed_generator():
     publisher_did = os.environ.get('PUBLISHER_DID', 'did:plc:due764fs3onxetsxab2jdnrw')
     return jsonify({
         "encoding": "application/json",
-        "body": {
-            "uri": f"at://{publisher_did}/app.bsky.feed.generator/alexasks",
-            "feeds": [{"uri": f"at://{publisher_did}/app.bsky.feed.generator/alexasks"}]
-        }
+        "feeds": [
+            {
+                "uri": f"at://{publisher_did}/app.bsky.feed.generator/alexasks"
+            }
+        ]
     })
 
 if __name__ == '__main__':
