@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/fralexander/bluesky-tracker/main/archive_posts.txt"
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/fralexander/bluesky-tracker/refs/heads/main/archive_posts.txt"
 
 @app.route('/.well-known/atproto-did', methods=['GET'])
 def atproto_did():
